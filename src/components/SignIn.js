@@ -3,21 +3,20 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar ,
   TouchableOpacity
 } from 'react-native';
 
 
 
-export default class SignUp extends Component{
+export default class SignIn extends Component{
 
 	render() {
 		return(
 			<View >
 				<View style={styles.signupTextCont}>
-					<Text style={styles.signupText}>Don't have an account?</Text>
+					<Text style={styles.signupText}>Already have an account?</Text>
 					<TouchableOpacity><Text style={styles.signupButton}
-					onPress={() => this.props.navigation.navigate('Register')}> Sign Up</Text></TouchableOpacity>
+					onPress={() => this.props.navigation.navigate('Login')}> Sign In</Text></TouchableOpacity>
 				</View>
 			</View>	
 			)

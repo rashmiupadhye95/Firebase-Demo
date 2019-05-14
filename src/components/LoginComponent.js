@@ -1,34 +1,76 @@
 import React, {Component} from 'react';
-import {StyleSheet,
-    Text,
-    View,
-    TextInput,
-    TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TextInput, TouchableOpacity, ToastAndroid} from 'react-native';
+import {loginUser} from '../services/dbService';
+const Toast = (props) => {
+  if (props.visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      props.message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+    return null;
+  }
+  return null;
+};
 
-export default class Login extends Component {
+export default class LoginComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible:false,
+      message: '',
+      user: {
+        email: '',
+        password: ''
+      }
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.doLogin = this.doLogin.bind(this);
+  }
+  handleChange(e, fieldName){
+    let currentState = this.state;
+    currentState.user[fieldName] = e.nativeEvent.text;
+    this.setState(currentState);
+  }
+
+  doLogin(){
+    loginUser(this.state.user).then(() => {
+        this.setState({message:'User Logged In',})
+        this.props.navigation.navigate('Dashboard');
+      }).catch(err=>{
+          this.setState({message:err.message,visible:true});
+      });
+}
   render() {
     return (
-         <View style={styles.regForm}>     
+         <View>     
          <Text style={styles.header}>Welcome to My App</Text> 
-            
            <TextInput style={styles.inputBox} 
               underlineColorAndroid='rgba(0,0,0,0)' 
               placeholder="Email"
               placeholderTextColor = "#ffffff"
               selectionColor="#fff"
               keyboardType="email-address"
-              onSubmitEditing={()=> this.password.focus()}
+              onChange={(e) => {
+                this.handleChange(e, 'email')
+              }}
               />
           <TextInput style={styles.inputBox} 
               underlineColorAndroid='rgba(0,0,0,0)' 
               placeholder="Password"
               secureTextEntry={true}
               placeholderTextColor = "#ffffff"
-              ref={(input) => this.password = input}
+              onChange={(e) => {
+                this.handleChange(e, 'password')
+              }}
               />  
-           <TouchableOpacity style={styles.button}>
-             <Text style={styles.buttonText}>Login</Text>
+           <TouchableOpacity style={styles.button} onPress={this.doLogin}>
+             <Text style={styles.buttonText}
+             >Login</Text>
            </TouchableOpacity>   
+           <Toast visible={this.state.visible} message={this.state.message} />
            </View>
            
     );
